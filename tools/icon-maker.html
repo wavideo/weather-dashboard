@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>너만을 위한 날씨 아이콘 변환기</title>
+    <style>
+      :root {
+        --bg: #eef3f8;
+        --card: #ffffff;
+        --line: rgba(0, 0, 0, 0.08);
+        --text: #17181a;
+        --muted: #68707a;
+        --accent: #fee500;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 20px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        gap: 14px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      input[type="file"] {
+        width: 100%;
+      }
+      button {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #fff;
+        color: var(--text);
+        border-radius: 999px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.primary {
+        background: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .preview-box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fbfcfe;
+      }
+      .preview-box h2 {
+        margin: 0 0 10px;
+        font-size: 14px;
+      }
+      .stage {
+        display: grid;
+        place-items: center;
+        min-height: 180px;
+        border-radius: 10px;
+        background:
+          linear-gradient(45deg, #edf1f6 25%, transparent 25%) 0 0 / 16px 16px,
+          linear-gradient(-45deg, #edf1f6 25%, transparent 25%) 0 0 / 16px 16px,
+          linear-gradient(45deg, transparent 75%, #edf1f6 75%) 0 0 / 16px 16px,
+          linear-gradient(-45deg, transparent 75%, #edf1f6 75%) 0 0 / 16px 16px,
+          #fff;
+      }
+      canvas {
+        max-width: 100%;
+        height: auto;
+        border-radius: 22%;
+        box-shadow: 0 2px 10px rgba(0,0,0,.08);
+      }
+      .small canvas { width: 96px; }
+      .large canvas { width: 170px; }
+      .meta {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="card">
+        <h1>너만을 위한 날씨 앱 아이콘 변환기</h1>
+        <p>이미지를 올리면 앱 아이콘용 PNG(192/512)를 생성해서 다운로드할 수 있어요. 정사각형이 아니어도 중앙 기준으로 잘 맞춰줍니다.</p>
+      </section>
+
+      <section class="card">
+        <div class="controls">
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+          <button id="download192" class="primary" disabled>icon-192 다운로드</button>
+          <button id="download512" class="primary" disabled>icon-512 다운로드</button>
+        </div>
+        <p id="status" class="meta">이미지를 선택하세요.</p>
+      </section>
+
+      <section class="preview-grid">
+        <div class="preview-box small">
+          <h2>192 미리보기</h2>
+          <div class="stage"><canvas id="canvas192" width="192" height="192"></canvas></div>
+        </div>
+        <div class="preview-box large">
+          <h2>512 미리보기</h2>
+          <div class="stage"><canvas id="canvas512" width="512" height="512"></canvas></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const canvas192 = document.getElementById("canvas192");
+      const canvas512 = document.getElementById("canvas512");
+      const btn192 = document.getElementById("download192");
+      const btn512 = document.getElementById("download512");
+      const statusEl = document.getElementById("status");
+
+      let sourceImage = null;
+
+      function clearCanvas(canvas) {
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function drawIcon(canvas, image) {
+        const ctx = canvas.getContext("2d");
+        const size = canvas.width;
+        ctx.clearRect(0, 0, size, size);
+
+        // Transparent icon PNG with center-crop fit
+        const iw = image.naturalWidth || image.width;
+        const ih = image.naturalHeight || image.height;
+        const srcSize = Math.min(iw, ih);
+        const sx = Math.round((iw - srcSize) / 2);
+        const sy = Math.round((ih - srcSize) / 2);
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(image, sx, sy, srcSize, srcSize, 0, 0, size, size);
+      }
+
+      function refreshPreviews() {
+        if (!sourceImage) {
+          clearCanvas(canvas192);
+          clearCanvas(canvas512);
+          btn192.disabled = true;
+          btn512.disabled = true;
+          return;
+        }
+        drawIcon(canvas192, sourceImage);
+        drawIcon(canvas512, sourceImage);
+        btn192.disabled = false;
+        btn512.disabled = false;
+      }
+
+      function downloadCanvas(canvas, filename) {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = filename;
+        a.click();
+      }
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          sourceImage = img;
+          refreshPreviews();
+          statusEl.textContent = `불러옴: ${file.name} (${img.naturalWidth}x${img.naturalHeight})`;
+          URL.revokeObjectURL(url);
+        };
+        img.onerror = () => {
+          statusEl.textContent = "이미지를 불러오지 못했어요. PNG/JPG/WEBP/SVG 파일인지 확인해주세요.";
+          URL.revokeObjectURL(url);
+        };
+        img.src = url;
+      });
+
+      btn192.addEventListener("click", () => downloadCanvas(canvas192, "icon-192.png"));
+      btn512.addEventListener("click", () => downloadCanvas(canvas512, "icon-512.png"));
+    </script>
+  </body>
+  </html>
+
