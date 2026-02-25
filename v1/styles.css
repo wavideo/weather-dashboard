@@ -10,6 +10,215 @@
   --page-pad: clamp(12px, 2vw, 24px);
   --ui-scale: 1.1;
 }
+
+/* KakaoTalk-style dashboard theme override */
+body {
+  background: #b5c7d8 !important;
+  color: #1d1d1f;
+}
+
+body::before,
+body::after {
+  display: none !important;
+}
+
+.meta-row {
+  margin-bottom: 18px;
+}
+
+#locationLabel,
+.search-dialog-head,
+.search-bar input,
+.suggest-item {
+  color: #1d1d1f !important;
+}
+
+.location-line,
+.updated,
+#searchStatus {
+  color: rgba(29, 29, 31, 0.72) !important;
+}
+
+.icon-btn,
+.refresh-icon-btn,
+.search-submit-btn {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #2b2c2f !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.main-card {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.weather-skeleton {
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.now-icon {
+  background: #f4f6f8 !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.now-temp,
+.week-temp,
+.hour-temp {
+  color: #111214 !important;
+}
+
+.now-state,
+.week-desc,
+.week-day,
+.hour-time,
+.hour-rain,
+.time-control-label {
+  color: rgba(29, 29, 31, 0.62) !important;
+}
+
+.now-compare-chip,
+.time-step-toggle,
+.time-step-btn.is-active,
+.hour-note-badge,
+.week-event-bubble,
+.week-focus-outfit-change-pill {
+  background: #f5f6f8 !important;
+  color: #2b2c2f !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: none !important;
+}
+
+.time-step-btn {
+  color: rgba(29, 29, 31, 0.6) !important;
+}
+
+.time-step-toggle {
+  position: relative;
+  background: rgba(255, 232, 0, 0.28) !important;
+  border-color: rgba(195, 166, 0, 0.35) !important;
+}
+
+.time-step-toggle::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateY(-50%) rotate(45deg);
+  background: rgba(255, 232, 0, 0.28);
+  border-top: 1px solid rgba(195, 166, 0, 0.35);
+  border-right: 1px solid rgba(195, 166, 0, 0.35);
+  border-radius: 0 3px 0 0;
+}
+
+.time-step-btn.is-active {
+  background: #fee500 !important;
+  color: #191919 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.time-step-btn:hover:not(.is-active) {
+  color: #191919 !important;
+  background: rgba(254, 229, 0, 0.42) !important;
+}
+
+.hour-card,
+.week-list li,
+.week-card-bubble {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hour-card.near-now,
+.week-list li.week-today {
+  border-color: rgba(0, 0, 0, 0.18) !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.week-card-bubble::after {
+  background: #ffffff !important;
+  border-right-color: rgba(0, 0, 0, 0.08) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.summary,
+.now-side-summary,
+.week-summary {
+  color: #1d1d1f !important;
+}
+
+/* Left chat bubble for the one-line weather summary */
+#nowSummary {
+  position: relative;
+  display: inline-block;
+  margin-top: 12px;
+  max-width: min(100%, 720px);
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  line-height: 1.45;
+}
+
+#nowSummary::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 14px;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transform: rotate(45deg);
+  border-bottom-left-radius: 2px;
+}
+
+.scroll-fade-hour::before,
+.scroll-fade-week::before {
+  background: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+  opacity: 0 !important;
+}
+
+.search-dialog,
+.search-suggest {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #1d1d1f !important;
+}
+
+.search-backdrop {
+  background: rgba(60, 76, 92, 0.28) !important;
+}
+
+@media (max-width: 1020px) {
+  body {
+    background: #b5c7d8 !important;
+    padding: 10px;
+  }
+
+  .main-card {
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  #nowSummary {
+    padding: 10px 12px;
+    font-size: 15px !important;
+  }
+}
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -904,6 +1113,203 @@ h1 { margin: 0; font-size: clamp(32px, 6vw, 56px); font-weight: 800; }
 
 .wicon { width: 26px; height: 26px; }
 .wicon.big { width: 64px; height: 64px; }
+
+/* Animated weather icons (CSS, lightweight) */
+.wicon-anim {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  transform: translateZ(0);
+}
+.wicon-anim.big {
+  width: 64px;
+  height: 64px;
+}
+
+.wicon-anim .wi-sun,
+.wicon-anim .wi-cloud,
+.wicon-anim .wi-rain,
+.wicon-anim .wi-snow {
+  position: absolute;
+  inset: 0;
+}
+
+.wicon-anim .wi-sun {
+  display: block;
+}
+.wicon-anim .wi-sun::before {
+  content: "";
+  position: absolute;
+  inset: 20%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff1a6 0%, #ffd54e 38%, #ffb300 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 207, 88, 0.35),
+    0 0 12px rgba(255, 188, 44, 0.3);
+  animation: wi-sun-pulse 3.6s ease-in-out infinite;
+}
+.wicon-anim .wi-sun > i {
+  position: absolute;
+  inset: 3%;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 0deg,
+      rgba(255, 208, 94, 0.9) 0 6deg,
+      transparent 6deg 38deg,
+      rgba(255, 208, 94, 0.85) 38deg 44deg,
+      transparent 44deg 84deg,
+      rgba(255, 208, 94, 0.8) 84deg 90deg,
+      transparent 90deg 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 46%, #000 48%, #000 63%, transparent 65%);
+  mask: radial-gradient(circle, transparent 46%, #000 48%, #000 63%, transparent 65%);
+  animation: wi-spin 14s linear infinite;
+  opacity: 0.95;
+}
+
+.wicon-anim.part .wi-sun {
+  left: -8%;
+  top: -10%;
+  width: 76%;
+  height: 76%;
+}
+
+.wicon-anim .wi-cloud {
+  inset: auto 0 0 0;
+  height: 70%;
+}
+.wicon-anim .wi-cloud::before {
+  content: "";
+  position: absolute;
+  inset: auto 12% 10% 12%;
+  height: 40%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #dfe9ff, #a9bbe5);
+  box-shadow:
+    inset 0 -1px 0 rgba(120, 145, 196, 0.18),
+    0 3px 8px rgba(73, 95, 147, 0.18);
+}
+.wicon-anim .wi-cloud > i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #e7eeff, #afc1ea);
+  box-shadow: inset 0 -1px 0 rgba(120,145,196,0.18);
+  animation: wi-cloud-float 4.6s ease-in-out infinite;
+}
+.wicon-anim .wi-cloud > i:nth-child(1) {
+  left: 16%;
+  bottom: 22%;
+  width: 34%;
+  height: 34%;
+  animation-delay: -0.5s;
+}
+.wicon-anim .wi-cloud > i:nth-child(2) {
+  left: 36%;
+  bottom: 29%;
+  width: 40%;
+  height: 40%;
+  animation-delay: -1.2s;
+}
+.wicon-anim .wi-cloud > i:nth-child(3) {
+  left: 58%;
+  bottom: 22%;
+  width: 28%;
+  height: 28%;
+  animation-delay: -0.9s;
+}
+
+.wicon-anim.clear .wi-cloud,
+.wicon-anim.clear .wi-rain,
+.wicon-anim.clear .wi-snow { display: none; }
+.wicon-anim.cloudy .wi-sun,
+.wicon-anim.cloudy .wi-rain,
+.wicon-anim.cloudy .wi-snow { display: none; }
+.wicon-anim.part .wi-rain,
+.wicon-anim.part .wi-snow { display: none; }
+
+.wicon-anim.rain .wi-sun,
+.wicon-anim.snow .wi-sun { display: none; }
+
+.wicon-anim .wi-rain {
+  inset: auto 0 -2% 0;
+  height: 36%;
+}
+.wicon-anim .wi-rain > b {
+  position: absolute;
+  top: 0;
+  width: 10%;
+  height: 60%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #85e5ff, #2f7dff);
+  transform: rotate(18deg);
+  animation: wi-rain-fall 1.15s linear infinite;
+  filter: drop-shadow(0 1px 2px rgba(35, 93, 197, 0.25));
+}
+.wicon-anim .wi-rain > b:nth-child(1) { left: 26%; animation-delay: -0.15s; }
+.wicon-anim .wi-rain > b:nth-child(2) { left: 45%; animation-delay: -0.55s; }
+.wicon-anim .wi-rain > b:nth-child(3) { left: 64%; animation-delay: -0.9s; }
+.wicon-anim.shower .wi-rain > b {
+  animation-duration: 0.8s;
+}
+
+.wicon-anim .wi-snow {
+  inset: auto 0 -1% 0;
+  height: 34%;
+}
+.wicon-anim .wi-snow > b {
+  position: absolute;
+  top: 0;
+  width: 12%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #c8ddff 70%);
+  box-shadow: 0 0 4px rgba(190, 214, 255, 0.35);
+  animation: wi-snow-fall 1.9s ease-in infinite;
+}
+.wicon-anim .wi-snow > b:nth-child(1) { left: 24%; animation-delay: -0.2s; }
+.wicon-anim .wi-snow > b:nth-child(2) { left: 46%; animation-delay: -0.9s; }
+.wicon-anim .wi-snow > b:nth-child(3) { left: 66%; animation-delay: -1.4s; }
+
+.wicon-anim.big .wi-sun::before {
+  box-shadow:
+    0 0 0 1px rgba(255, 207, 88, 0.25),
+    0 0 18px rgba(255, 188, 44, 0.22);
+}
+
+@keyframes wi-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes wi-sun-pulse {
+  0%, 100% { transform: scale(0.98); }
+  50% { transform: scale(1.03); }
+}
+@keyframes wi-cloud-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2%); }
+}
+@keyframes wi-rain-fall {
+  0% { transform: translateY(-5%) rotate(18deg); opacity: 0; }
+  15% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(75%) rotate(18deg); opacity: 0; }
+}
+@keyframes wi-snow-fall {
+  0% { transform: translateY(-8%) translateX(0); opacity: 0; }
+  15% { opacity: 1; }
+  50% { transform: translateY(32%) translateX(8%); opacity: 1; }
+  100% { transform: translateY(70%) translateX(-6%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wicon-anim .wi-sun > i,
+  .wicon-anim .wi-sun::before,
+  .wicon-anim .wi-cloud > i,
+  .wicon-anim .wi-rain > b,
+  .wicon-anim .wi-snow > b {
+    animation: none !important;
+  }
+}
 
 @media (max-width: 1020px) {
   .weather-skeleton {
@@ -2652,5 +3058,674 @@ body {
       opacity: 0.34;
       filter: blur(10px);
     }
+  }
+}
+
+/* Forced night dark theme (21:00~04:59) */
+body.force-dark {
+  background: #1c1d1f !important;
+  color: #f1f3f5 !important;
+}
+
+body.force-dark #locationLabel,
+body.force-dark .now-temp,
+body.force-dark .hour-temp,
+body.force-dark .week-temp {
+  color: #f4f5f7 !important;
+}
+
+body.force-dark .location-line,
+body.force-dark .updated,
+body.force-dark #searchStatus,
+body.force-dark .now-state,
+body.force-dark .week-day,
+body.force-dark .week-desc,
+body.force-dark .hour-time,
+body.force-dark .hour-rain,
+body.force-dark .time-control-label {
+  color: rgba(255, 255, 255, 0.58) !important;
+}
+
+body.force-dark .location-line #updatedAt {
+  color: rgba(255, 255, 255, 0.52) !important;
+}
+
+body.force-dark .top-icon-actions .icon-btn,
+body.force-dark .top-icon-actions .refresh-icon-btn {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+body.force-dark .hour-card,
+body.force-dark .week-list li {
+  background: #2b2d31 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+body.force-dark .hour-card.near-now,
+body.force-dark .week-list li.week-today,
+body.force-dark .week-list li.week-tomorrow {
+  border-color: rgba(254, 229, 0, 0.92) !important;
+  box-shadow: inset 0 0 0 1px rgba(254, 229, 0, 0.12) !important;
+}
+
+body.force-dark #nowSummary,
+body.force-dark #timeSummary {
+  background: #2f3136 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f4f5f7 !important;
+  box-shadow: none !important;
+}
+
+body.force-dark #nowSummary::before,
+body.force-dark #timeSummary::before {
+  background: #2f3136 !important;
+  border-left-color: rgba(255, 255, 255, 0.08) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.force-dark .now-icon {
+  background: #2a2c31 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.force-dark .time-step-toggle {
+  background: #efe170 !important;
+  border-color: #d2c55b !important;
+}
+
+body.force-dark .time-step-toggle::after {
+  background: #efe170 !important;
+  border-top-color: #d2c55b !important;
+  border-right-color: #d2c55b !important;
+}
+
+body.force-dark .time-step-btn {
+  color: rgba(255, 255, 255, 0.66) !important;
+}
+
+body.force-dark .time-step-btn.is-active {
+  background: #fee500 !important;
+  color: #191919 !important;
+  border-color: rgba(0, 0, 0, 0.14) !important;
+}
+
+body.force-dark .week-list li .week-card-bubble,
+body.force-dark .week-list li.week-today .week-card-bubble,
+body.force-dark .week-list li.week-tomorrow .week-card-bubble {
+  background: #fee500 !important;
+  border-color: rgba(0, 0, 0, 0.14) !important;
+}
+
+body.force-dark .week-list li .week-card-bubble::after,
+body.force-dark .week-list li.week-today .week-card-bubble::after,
+body.force-dark .week-list li.week-tomorrow .week-card-bubble::after {
+  background: #fee500 !important;
+  border-right-color: rgba(0, 0, 0, 0.14) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.14) !important;
+}
+
+body.force-dark .week-list li .week-card-bubble .week-focus-outfit-name,
+body.force-dark .week-list li .week-card-bubble .week-focus-outfit-action {
+  color: #191919 !important;
+}
+
+body.force-dark .now-main::after {
+  background: #4a4f59 !important;
+  color: #f3f5f8 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+body.force-dark .hour-current-step-badge {
+  background: #4a4f59 !important;
+  color: #f3f5f8 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+/* Final chat-bubble fixes */
+#nowSummary,
+#timeSummary {
+  position: relative !important;
+  display: inline-block !important;
+  margin: 6px 0 0 !important;
+  width: fit-content !important;
+  max-width: min(100%, 420px);
+  padding: 12px 14px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  color: #1d1d1f !important;
+  line-height: 1.45 !important;
+}
+
+#nowSummary[hidden],
+#timeSummary[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 561px) {
+  #timeSummary {
+    max-width: min(46vw, 420px) !important;
+    white-space: normal !important;
+  }
+}
+
+#nowSummary::before,
+#timeSummary::before {
+  content: "" !important;
+  position: absolute;
+  left: -5px;
+  top: 16px;
+  width: 9px;
+  height: 9px;
+  background: #ffffff !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  transform: rotate(45deg);
+  border-bottom-left-radius: 1px;
+}
+
+.time-step-toggle {
+  background: #efe170 !important;
+  border-color: #d2c55b !important;
+}
+
+.time-step-toggle::after {
+  right: -3px !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 0 !important;
+  background: #efe170 !important;
+  border-top-color: #d2c55b !important;
+  border-right-color: #d2c55b !important;
+}
+
+@media (max-width: 560px) {
+  .now-main {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  #nowSummary,
+  #timeSummary {
+    order: 10;
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    align-self: flex-start !important;
+    display: block !important;
+    max-width: calc(100vw - 28px) !important;
+    padding: 10px 12px !important;
+    font-size: 15px !important;
+    margin: 4px 6px 0 0 !important;
+    text-align: left !important;
+  }
+
+  #timeSummary {
+    margin-top: 18px !important;
+  }
+
+  .time-controls-row {
+    justify-content: flex-start !important;
+    padding-left: 0;
+  }
+
+  .time-control-group {
+    margin-left: 0 !important;
+  }
+}
+
+.week-card-bubble {
+  background: #fee500 !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.week-card-bubble::after {
+  background: #fee500 !important;
+  border-right-color: rgba(0, 0, 0, 0.10) !important;
+  border-bottom-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+.week-focus-outfit-name,
+.week-focus-outfit-action {
+  color: #191919 !important;
+}
+
+/* Yellow stroke highlight for today/tomorrow and near-now hour card */
+.hour-card.near-now,
+.week-list li.week-today,
+.week-list li.week-tomorrow {
+  border-color: rgba(254, 229, 0, 0.95) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(191, 162, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.07) !important;
+}
+
+/* Pill text color variants by info type */
+.hour-note-badge.rain,
+.hour-note-badge.shower,
+.hour-note-badge.temp-down,
+.week-event-bubble.rain,
+.week-event-bubble.rain-end,
+.week-event-bubble.cool {
+  color: #2f6fbe !important;
+}
+
+.hour-note-badge.snow,
+.week-event-bubble.snow {
+  color: #66748b !important;
+}
+
+.hour-note-badge.temp-up,
+.week-event-bubble.warm {
+  color: #b36a15 !important;
+}
+
+.hour-note-badge.lull,
+.hour-note-badge.end,
+.hour-note-badge.range-cold,
+.hour-note-badge.range-mild {
+  color: #6d727d !important;
+}
+
+/* Tighten gap between hourly cards and daily cards */
+.hour-strip {
+  padding-bottom: 92px !important;
+  padding-top: 14px !important;
+}
+
+/* Kakao-like top header layout */
+.meta-row {
+  margin: 4px 0 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+}
+
+.location-line {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+#locationLabel {
+  font-size: clamp(14px, 4.8vw, 20px) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.location-line #updatedAt {
+  margin: 0 !important;
+  font-size: 11px !important;
+  color: rgba(29, 29, 31, 0.55) !important;
+  white-space: nowrap;
+}
+
+.top-icon-actions {
+  margin: 0 !important;
+  gap: 8px !important;
+  flex: 0 0 auto !important;
+  justify-content: flex-end !important;
+}
+
+.top-icon-actions .icon-btn,
+.top-icon-actions .refresh-icon-btn {
+  width: 44px !important;
+  height: 44px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: rgba(29, 29, 31, 0.78) !important;
+}
+
+.top-icon-actions .icon-btn svg,
+.top-icon-actions .refresh-icon-btn svg {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.top-icon-actions .icon-btn:hover,
+.top-icon-actions .refresh-icon-btn:hover {
+  background: transparent !important;
+  color: rgba(29, 29, 31, 0.95) !important;
+}
+
+@media (max-width: 1020px) {
+  .meta-row {
+    margin: 2px 0 14px !important;
+  }
+
+  .location-line {
+    gap: 6px !important;
+  }
+
+  .location-line #updatedAt {
+    font-size: 10px !important;
+    max-width: 34vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #searchStatus {
+    display: none !important;
+  }
+}
+
+/* Remove rainbow / aurora background effects */
+body {
+  background: #b5c7d8 !important;
+}
+
+body::before,
+body::after,
+.now-main::before {
+  display: none !important;
+  opacity: 0 !important;
+  background: transparent !important;
+}
+
+/* Restore subtle focus bands behind current hour card / today day-card */
+.scroll-fade-hour::before,
+.scroll-fade-week::before {
+  display: block !important;
+  opacity: 0.4 !important;
+  background: rgba(34, 41, 51, 0.10) !important;
+  border-top-color: rgba(34, 41, 51, 0.10) !important;
+  border-bottom-color: rgba(34, 41, 51, 0.10) !important;
+}
+
+.hour-day-badge {
+  background: #6d7886 !important;
+  color: #f3f6fa !important;
+  border: 1px solid rgba(52, 60, 70, 0.28) !important;
+  padding: 2px 6px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+}
+
+.hour-card.day-start::before {
+  background: rgba(71, 81, 93, 0.8) !important;
+}
+
+/* "지금." pill above current weather area (same tone as day separator pill) */
+.now-main {
+  position: relative;
+}
+
+.now-main::after {
+  content: none;
+  position: absolute;
+  left: 0;
+  top: -22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #6d7886;
+  color: #f3f6fa;
+  border: 1px solid rgba(52, 60, 70, 0.28);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.hour-current-step-badge {
+  position: absolute;
+  left: 50%;
+  top: -26px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #6d7886;
+  color: #f3f6fa;
+  border: 1px solid rgba(52, 60, 70, 0.28);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  z-index: 3;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1c1d1f !important;
+    color: #f1f3f5 !important;
+  }
+
+  body::before,
+  body::after,
+  .now-main::before {
+    display: none !important;
+    background: transparent !important;
+  }
+
+  .meta-row,
+  .location-line,
+  .updated,
+  #searchStatus {
+    color: rgba(255, 255, 255, 0.62) !important;
+  }
+
+  #locationLabel {
+    color: #f4f5f7 !important;
+  }
+
+  .location-line #updatedAt {
+    color: rgba(255, 255, 255, 0.52) !important;
+  }
+
+  .top-icon-actions .icon-btn,
+  .top-icon-actions .refresh-icon-btn {
+    color: rgba(255, 255, 255, 0.78) !important;
+  }
+
+  .now-icon {
+    background: #2a2c31 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .now-temp,
+  .hour-temp,
+  .week-temp {
+    color: #f4f5f7 !important;
+  }
+
+  .now-state,
+  .week-day,
+  .week-desc,
+  .hour-time,
+  .hour-rain,
+  .time-control-label {
+    color: rgba(255, 255, 255, 0.58) !important;
+  }
+
+  .hour-card,
+  .week-list li {
+    background: #2b2d31 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+
+  .hour-card.near-now,
+  .week-list li.week-today,
+  .week-list li.week-tomorrow {
+    border-color: rgba(254, 229, 0, 0.92) !important;
+    box-shadow: inset 0 0 0 1px rgba(254, 229, 0, 0.12) !important;
+  }
+
+  #nowSummary,
+  #timeSummary {
+    background: #2f3136 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #f4f5f7 !important;
+    box-shadow: none !important;
+  }
+
+  #nowSummary::before,
+  #timeSummary::before {
+    background: #2f3136 !important;
+    border-left-color: rgba(255, 255, 255, 0.08) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .time-step-toggle {
+    background: #efe170 !important;
+    border-color: #d2c55b !important;
+  }
+
+  .time-step-toggle::after {
+    background: #efe170 !important;
+    border-top-color: #d2c55b !important;
+    border-right-color: #d2c55b !important;
+  }
+
+  .time-step-btn {
+    color: rgba(255, 255, 255, 0.66) !important;
+  }
+
+  .time-step-btn.is-active {
+    background: #fee500 !important;
+    color: #191919 !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+  }
+
+  .week-card-bubble {
+    background: #fee500 !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+  }
+
+  .week-card-bubble::after {
+    background: #fee500 !important;
+    border-right-color: rgba(0, 0, 0, 0.14) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.14) !important;
+  }
+
+  .week-focus-outfit-name,
+  .week-focus-outfit-action {
+    color: #161616 !important;
+  }
+
+  .hour-note-badge,
+  .week-event-bubble {
+    background: #3a3d43 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .hour-day-badge {
+    background: #4a4f59 !important;
+    color: #f3f5f8 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .now-main::after {
+    background: #4a4f59 !important;
+    color: #f3f5f8 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+
+  .hour-current-step-badge {
+    background: #4a4f59 !important;
+    color: #f3f5f8 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+
+  .hour-card.day-start::before {
+    background: rgba(102, 107, 116, 0.8) !important;
+  }
+
+  .scroll-fade-hour::before,
+  .scroll-fade-week::before {
+    opacity: 0.22 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-top-color: rgba(255, 255, 255, 0.06) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .search-dialog,
+  .search-suggest {
+    background: #24262b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #f4f5f7 !important;
+  }
+
+  .search-bar,
+  .modal-search-wrap .search-bar {
+    background: #2d3036 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .search-bar input,
+  .search-dialog-head,
+  .suggest-item {
+    color: #f4f5f7 !important;
+  }
+
+  .suggest-sub,
+  .search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.46) !important;
+  }
+
+  .icon-btn:not(.top-icon-actions .icon-btn):not(.top-icon-actions .refresh-icon-btn),
+  .refresh-icon-btn:not(.top-icon-actions .refresh-icon-btn),
+  .search-submit-btn {
+    background: #2f3238 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #f0f2f5 !important;
+    box-shadow: none !important;
+  }
+
+  /* Keep outfit recommendation bubbles yellow in dark mode */
+  .week-list li .week-card-bubble,
+  .week-list li.week-today .week-card-bubble,
+  .week-list li.week-tomorrow .week-card-bubble {
+    background: #fee500 !important;
+    border-color: rgba(0, 0, 0, 0.14) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18) !important;
+  }
+
+  .week-list li .week-card-bubble::after,
+  .week-list li.week-today .week-card-bubble::after,
+  .week-list li.week-tomorrow .week-card-bubble::after {
+    background: #fee500 !important;
+    border-right-color: rgba(0, 0, 0, 0.14) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.14) !important;
+  }
+
+  .week-list li .week-focus-outfit-name,
+  .week-list li .week-focus-outfit-action {
+    color: #161616 !important;
+  }
+
+  .week-list li .week-card-bubble .week-focus-outfit-name,
+  .week-list li .week-card-bubble .week-focus-outfit-action,
+  .week-list li.week-today .week-card-bubble .week-focus-outfit-name,
+  .week-list li.week-today .week-card-bubble .week-focus-outfit-action,
+  .week-list li.week-tomorrow .week-card-bubble .week-focus-outfit-name,
+  .week-list li.week-tomorrow .week-card-bubble .week-focus-outfit-action {
+    color: #191919 !important;
+    text-shadow: none !important;
   }
 }

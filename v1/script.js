@@ -11,9 +11,186 @@ let mobileTimeStepUnlocked = false;
 let timeSlotsTapState = null;
 let lastMobileTimeStepCycleAt = 0;
 let suppressTimeSlotsTapUntil = 0;
+let lastViewportIsMobile = window.matchMedia("(max-width: 1020px)").matches;
+let lastViewportIsCompactChat = window.matchMedia("(max-width: 560px)").matches;
 const RECENT_SEARCH_KEY = "weather_story_recent_searches_v1";
 const PREFERRED_UI_SCALE = 1.1;
 const MIN_DESKTOP_UI_SCALE = 0.9;
+const DEFAULT_CHAT_SUMMARY = "오후 2시쯤 지금보다 9° 올라가요. 오늘 일교차가 큰 편이에요.";
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+function greetingForHour(hour) {
+  const names = ["민주우", "민주", "여보", "자기얌"];
+  const morningGreetings = ["좋은 아침!", "조은 아침!", "잘 잤어?"];
+  const nightGreetings = ["잘 준비 다 했어?", "잘쟝"];
+  if (hour >= 21 || hour <= 3) {
+    const name = pick(["민주", "민주우"]);
+    const greet = pick(nightGreetings);
+    return `${name} ${greet}`;
+  }
+  if (hour < 12) {
+    const name = pick(names);
+    const greet = pick(morningGreetings);
+    return `${name} ${greet}`;
+  }
+  return "";
+}
+function buildTomorrowOutfitChatLine(tomorrowBrief) {
+  if (!tomorrowBrief) return "";
+  const outfit = String(tomorrowBrief.outfitName || "")
+    .replace(/\s*레이어드/g, "")
+    .replace(/\//g, "·")
+    .trim();
+  const action = String(tomorrowBrief.actionText || "");
+  const warmLike = /(반팔|얇은)/.test(outfit);
+  const coldLike = /(코트|패딩|니트|맨투맨)/.test(outfit);
+  const reasonLead = action.includes("일교차 큼")
+    ? "내일 일교차 크니까"
+    : action.includes("일교차 작음")
+      ? "내일 일교차가 크진 않으니까"
+      : warmLike
+        ? "내일 더우니까"
+        : coldLike
+          ? "내일 쌀쌀할수도 있으니까"
+          : "내일 날씨 생각하면";
+  const risky = !!tomorrowBrief.risky;
+  if (risky) {
+    return pick([
+      `${reasonLead} ${outfit} 느낌 어때?`,
+      `${reasonLead} ${outfit} 쪽으로 입는거 어때?`,
+      `${reasonLead} ${outfit} 느낌으로 가면 좀 더 안심되겠다!`,
+    ]);
+  }
+  if (action.includes("일교차 큼")) {
+    return pick([
+      `${reasonLead} ${outfit} 쪽으로 입구 나오는게 좋겠다!`,
+      `${reasonLead} ${outfit} 느낌으로 챙겨두면 좋겠다!`,
+      `${reasonLead} ${outfit}으로 입으면 좋겠다!`,
+    ]);
+  }
+  if (action.includes("일교차 작음")) {
+    return pick([
+      `${reasonLead} ${outfit} 정도로 가도 괜찮겠다!!`,
+      `${reasonLead} ${outfit} 느낌으로 입어도 무난하겠다!!`,
+    ]);
+  }
+  return pick([
+    `${reasonLead} ${outfit} 쪽으로 입으면 좋겠다!`,
+    `${reasonLead} ${outfit} 느낌 어때?`,
+  ]);
+}
+function buildTomorrowWeatherChatLine(tomorrowWeather) {
+  if (!tomorrowWeather) return "";
+  const desc = String(tomorrowWeather.desc || "").trim();
+  const hi = Number.isFinite(tomorrowWeather.max) ? Math.round(tomorrowWeather.max) : null;
+  const lo = Number.isFinite(tomorrowWeather.min) ? Math.round(tomorrowWeather.min) : null;
+  const rainProb = Number.isFinite(tomorrowWeather.rainProb) ? Math.round(tomorrowWeather.rainProb) : null;
+  if (hi === null || lo === null) return "";
+  const severeRainDesc = /(뇌우|우박|강한 비|매우 강한 소나기|강한 소나기)/.test(desc);
+  const riskyDesc = severeRainDesc;
+  const riskyRain = Number.isFinite(rainProb) && rainProb >= 80;
+  const rainyDesc = /(비|소나기|뇌우)/.test(desc);
+  if (riskyDesc || riskyRain) {
+    if (rainyDesc || riskyRain) {
+      const sadMark = severeRainDesc ? " ㅠㅠ" : "";
+      return pick([
+        `내일 ${desc}래${sadMark}${rainProb !== null ? ` 강수확률 ${rainProb}%니까` : ""} 우산 꼭 챙겨!`,
+        `내일 ${desc} 온대${sadMark}${rainProb !== null ? ` 강수확률도 ${rainProb}%라서` : ""} 우산 꼭 챙겨야겠어`,
+        `내일 ${desc}라 좀 걱정된다${sadMark}${rainProb !== null ? ` 강수확률 ${rainProb}%니까` : ""} 우산 꼭 챙겨!`,
+      ]);
+    }
+    const base = pick([
+      `내일 ${desc}이라 좀 걱정되네`,
+      `내일 날씨가 ${desc}라 조심해야겠어`,
+      `내일 ${desc} 온다니까 미리 챙겨야겠다`,
+    ]) + (rainProb !== null ? ` 비확률도 ${rainProb}% 정도래` : "");
+    return base;
+  }
+  if (rainyDesc && ((Number(rainProb) || 0) >= 40)) {
+    return pick([
+      `내일 ${desc} 온대서 우산 챙겨야겠어`,
+      `내일은 ${desc} 소식 있어서 우산 챙기면 좋겠다!`,
+      `내일 비올수있대 우산 하나 챙겨두자`,
+    ]) + (rainProb !== null ? ` 비확률은 ${rainProb}% 정도래` : "");
+  }
+  return pick([
+    `내일은 ${desc}이고 ${hi}도 ${lo}도 정도래`,
+    `내일 날씨는 ${desc}에 ${hi}도 ${lo}도 정도 되겠대`,
+    `내일은 ${desc}에 최고 ${hi}도 최저 ${lo}도래${rainProb !== null ? ` 비확률은 ${rainProb}% 정도` : ""}`,
+  ]);
+}
+function toGuideToneTimeSummary(trendLead, rangeSummary, options = {}) {
+  const nowHour = getNowZonedParts().hour;
+  const greeting = greetingForHour(nowHour);
+  const lines = greeting ? [greeting] : [];
+  const trend = String(trendLead || "").trim();
+  const range = String(rangeSummary || "").trim();
+  const tomorrowBrief = options.tomorrowBrief || null;
+  const tomorrowWeather = options.tomorrowWeather || null;
+
+  if (nowHour >= 21 && nowHour <= 23) {
+    const tomorrowWeatherLine = buildTomorrowWeatherChatLine(tomorrowWeather);
+    const tomorrowOutfitLine = buildTomorrowOutfitChatLine(tomorrowBrief);
+    if (tomorrowWeatherLine) lines.push(tomorrowWeatherLine);
+    if (tomorrowOutfitLine) lines.push(tomorrowOutfitLine);
+    if (lines.length) return lines.slice(0, 3).join("\n");
+  }
+
+  const up = trend.match(/(오전|오후)\s?(\d+)시쯤 지금보다 (\d+)° 올라가요\./);
+  const down = trend.match(/(오전|오후)\s?(\d+)시쯤 지금보다 (\d+)° 내려가요\./);
+  if (up) {
+    lines.push(pick([
+      `${up[1]} ${up[2]}시쯤 지금보다 ${up[3]}도 올라간대애`,
+      `${up[1]} ${up[2]}시쯤 지금보다 ${up[3]}도 올라간댕`,
+      `${up[1]} ${up[2]}시쯤 되면 지금보다 ${up[3]}도 올라가더라`,
+    ]));
+  } else if (down) {
+    lines.push(pick([
+      `${down[1]} ${down[2]}시쯤 지금보다 ${down[3]}도 내려간대애`,
+      `${down[1]} ${down[2]}시쯤 지금보다 ${down[3]}도 내려간댕`,
+      `${down[1]} ${down[2]}시쯤 되면 지금보다 ${down[3]}도 내려가더라구!`,
+    ]));
+  } else if (trend.includes("기온 변화가 적어요")) {
+    lines.push(pick([
+      "당분간 기온변화가 크진 않대애",
+      "당분간 기온변화는 잔잔한 편이댕",
+      "한동안 기온이 크게 안 흔들리더라",
+    ]));
+  } else if (trend.includes("예보 데이터는 적어요")) {
+    lines.push(pick([
+      "오늘 남은 시간 예보가 좀 적대애",
+      "지금 이후 예보가 살짝 비어있댕",
+      "남은 시간 예보 데이터가 좀 적더라",
+    ]));
+  } else if (trend) {
+    lines.push(trend.replace(/요\./g, "대애"));
+  }
+
+  if (range.includes("일교차가 큰 편")) {
+    lines.push(pick([
+      "오늘 일교차가 큰 편이래서 레이어드하게 입구 나와욤",
+      "오늘 일교차 큰 편이니깐 레이어드하게 입고 나왕",
+      "오늘 일교차 꽤 커서 겉옷 벗을수있게 입구 나오면 좋겠다!",
+    ]));
+  } else if (range.includes("일교차가 작은 편")) {
+    lines.push(pick([
+      "오늘은 일교차가 크지 않대애 가볍게 입어도 괜찮겠다!!",
+      "오늘은 일교차 작은 편이니깐 옷차림 너무 무겁지 않아도 돼",
+      "일교차가 크진 않아서 편하게 입구 나와도 괜찮아",
+    ]));
+  } else if (range.includes("보통")) {
+    lines.push(pick([
+      "오늘 일교차는 보통인 편이래서 얇은 겉옷 하나 챙겨봐",
+      "오늘 일교차는 무난한 편이니깐 얇은 겉옷만 하나 챙겨봐",
+      "일교차 보통이라 가볍게 입구 얇은거 하나만 더 챙기면 돼",
+    ]));
+  } else if (range) {
+    lines.push(range.replace(/요\./g, "대애"));
+  }
+
+  return lines.slice(0, 3).join("\n");
+}
 
 const el = {
   updatedAt: document.getElementById("updatedAt"),
@@ -53,7 +230,20 @@ function isRain(code) { return [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99]
 function isSnow(code) { return [71,73,75,77,85,86].includes(code); }
 function isShowerCode(code) { return [80,81,82].includes(code); }
 function withLineBreaks(text) {
-  return String(text).split(". ").map((p) => p.trim()).filter(Boolean).map((p) => (p.endsWith(".") ? p : `${p}.`)).join("<br />");
+  const raw = String(text || "").replace(/\r\n/g, "\n");
+  if (raw.includes("\n")) {
+    return raw
+      .split("\n")
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .join("<br />");
+  }
+  return raw
+    .split(". ")
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => (/[.!?]$/.test(p) ? p : `${p}.`))
+    .join("<br />");
 }
 function formatKoreanHour(hour) {
   const h = Number(hour) || 0;
@@ -64,6 +254,9 @@ function formatKoreanHour(hour) {
 }
 function isMobileViewport() {
   return window.matchMedia("(max-width: 1020px)").matches;
+}
+function isCompactChatViewport() {
+  return window.matchMedia("(max-width: 560px)").matches;
 }
 function rerenderCachedWeatherIfReady() {
   if (lastWeatherData) render(lastWeatherData);
@@ -148,6 +341,17 @@ function getNowZonedParts(timeZone = activeWeatherTimezone) {
       dateKey: `${y}-${m}-${d}`,
     };
   }
+}
+
+function shouldForceDarkByHour() {
+  const h = getNowZonedParts().hour;
+  return h >= 21 || h <= 4;
+}
+
+function updateForcedNightTheme() {
+  try {
+    document.body.classList.toggle("force-dark", shouldForceDarkByHour());
+  } catch {}
 }
 
 function getApiDateKey(value) {
@@ -250,8 +454,8 @@ function formatLocationLabel(place, { compact = false } = {}) {
 
 function updateAdaptiveUiScale() {
   const root = document.documentElement;
-  const isMobile = window.matchMedia("(max-width: 1020px)").matches;
-  if (isMobile) {
+  const isCompactChat = isCompactChatViewport();
+  if (isCompactChat) {
     root.style.setProperty("--ui-scale", "1");
     return;
   }
@@ -571,17 +775,26 @@ function applySelectedPlace(place, fallbackName) {
 }
 
 function weatherIconSvg(code, big = false) {
-  const cls = big ? "wicon big" : "wicon";
-  if ([0, 1].includes(code)) {
-    return `<svg class="${cls}" viewBox="0 0 64 64"><defs><radialGradient id="sunG" cx="40%" cy="35%"><stop offset="0%" stop-color="#ffe89a"/><stop offset="100%" stop-color="#ffb400"/></radialGradient></defs><circle cx="32" cy="32" r="16" fill="url(#sunG)"/><g stroke="#ffd86b" stroke-width="4" stroke-linecap="round"><line x1="32" y1="6" x2="32" y2="0"/><line x1="32" y1="64" x2="32" y2="58"/><line x1="6" y1="32" x2="0" y2="32"/><line x1="64" y1="32" x2="58" y2="32"/></g></svg>`;
-  }
-  if ([2, 3, 45, 48].includes(code)) {
-    return `<svg class="${cls}" viewBox="0 0 64 64"><defs><linearGradient id="cloudG" x1="0" x2="1"><stop offset="0%" stop-color="#d7e4ff"/><stop offset="100%" stop-color="#8fa6d9"/></linearGradient></defs><ellipse cx="27" cy="34" rx="16" ry="11" fill="url(#cloudG)"/><ellipse cx="40" cy="30" rx="14" ry="10" fill="url(#cloudG)"/><rect x="15" y="34" width="35" height="12" rx="6" fill="url(#cloudG)"/></svg>`;
+  const cls = `${big ? "wicon big" : "wicon"} wicon-anim`;
+  const cloud = `<span class="wi-cloud"><i></i><i></i><i></i></span>`;
+  const sun = `<span class="wi-sun"><i></i></span>`;
+  const rain = `<span class="wi-rain"><b></b><b></b><b></b></span>`;
+  const snow = `<span class="wi-snow"><b></b><b></b><b></b></span>`;
+
+  if (isSnow(code)) {
+    return `<span class="${cls} snow">${cloud}${snow}</span>`;
   }
   if (isRain(code)) {
-    return `<svg class="${cls}" viewBox="0 0 64 64"><defs><linearGradient id="cloudRG" x1="0" x2="1"><stop offset="0%" stop-color="#d7e4ff"/><stop offset="100%" stop-color="#8fa6d9"/></linearGradient><linearGradient id="rainG" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#5fd4ff"/><stop offset="100%" stop-color="#2f7dff"/></linearGradient></defs><ellipse cx="27" cy="30" rx="16" ry="11" fill="url(#cloudRG)"/><ellipse cx="40" cy="27" rx="14" ry="10" fill="url(#cloudRG)"/><rect x="15" y="30" width="35" height="12" rx="6" fill="url(#cloudRG)"/><g stroke="url(#rainG)" stroke-width="4" stroke-linecap="round"><line x1="22" y1="48" x2="18" y2="56"/><line x1="32" y1="48" x2="28" y2="56"/><line x1="42" y1="48" x2="38" y2="56"/></g></svg>`;
+    const showerClass = isShowerCode(code) ? " shower" : "";
+    return `<span class="${cls} rain${showerClass}">${cloud}${rain}</span>`;
   }
-  return `<svg class="${cls}" viewBox="0 0 64 64"><circle cx="32" cy="32" r="14" fill="#9db2df"/></svg>`;
+  if ([2, 3, 45, 48].includes(code)) {
+    return `<span class="${cls} cloudy">${cloud}</span>`;
+  }
+  if (code === 1) {
+    return `<span class="${cls} part">${sun}${cloud}</span>`;
+  }
+  return `<span class="${cls} clear">${sun}</span>`;
 }
 
 function dropIconSvg(probability = null) {
@@ -636,7 +849,7 @@ function buildNowFeature(weather) {
     if (yesterdaySameTemp === null) return { text: "", dir: "" };
     if (currentTemp > yesterdaySameTemp) return { text: `어제보다 ↑ ${currentTemp - yesterdaySameTemp}°`, dir: "rise" };
     if (currentTemp < yesterdaySameTemp) return { text: `어제보다 ↓ ${yesterdaySameTemp - currentTemp}°`, dir: "fall" };
-    return { text: "어제보다 0°", dir: "" };
+    return { text: "어제와 같은 온도", dir: "" };
   })();
 
   if (!future.length) {
@@ -846,8 +1059,8 @@ function applyEdgeCardOpacity(container, selector, options = {}) {
 }
 
 function updateScrollEdgeOpacity() {
-  const isMobile = window.matchMedia("(max-width: 1020px)").matches;
-  if (isMobile) {
+  const isCompactChat = isCompactChatViewport();
+  if (isCompactChat) {
     applyEdgeCardOpacity(el.timeSlots, ".hour-card", { fadePx: 44, minOpacity: 0.3, sideInset: 0, metric: "center" });
     applyEdgeCardOpacity(el.weekList, "li", { fadePx: 52, minOpacity: 0.3, sideInset: 0, metric: "center" });
     return;
@@ -1697,6 +1910,7 @@ async function fetchWeatherByCoords(place) {
 }
 
 function render(weather) {
+  updateForcedNightTheme();
   const nowFeature = buildNowFeature(weather);
   const time = buildTimeFeature(weather);
   const yesterdayDailyIdx = getDailyIndexByOffset(weather.daily.time, -1);
@@ -1712,6 +1926,10 @@ function render(weather) {
 
   el.nowIcon.innerHTML = weatherIconSvg(nowFeature.code, true);
   el.nowTemp.textContent = `${nowFeature.now}°`;
+  const nowMainEl = document.querySelector(".now-main");
+  if (nowMainEl) {
+    nowMainEl.setAttribute("data-step-label", `${selectedTimeStepHours}시간 단위`);
+  }
   el.nowState.innerHTML = `${nowFeature.state} · <span class="precip-inline">${dropIconSvg(nowFeature.rainProb)} ${nowFeature.rainProb}%</span>`;
   if (nowFeature.compareChip?.text) {
     el.nowCompareChip.hidden = false;
@@ -1726,11 +1944,50 @@ function render(weather) {
     el.nowSummary.hidden = false;
     el.nowSummary.innerHTML = withLineBreaks(nowFeature.summary);
   } else {
+    el.nowSummary.hidden = false;
+    el.nowSummary.innerHTML = withLineBreaks(DEFAULT_CHAT_SUMMARY);
+  }
+
+  const tomorrowWeather = tomorrowDailyIdx >= 0 ? {
+    desc: weatherText(weather.daily.weather_code[tomorrowDailyIdx]),
+    max: weather.daily.temperature_2m_max[tomorrowDailyIdx],
+    min: weather.daily.temperature_2m_min[tomorrowDailyIdx],
+    rainProb: weather.daily.precipitation_probability_max[tomorrowDailyIdx],
+  } : null;
+  const riskyTomorrow = !!(tomorrowWeather && ((/(뇌우|우박|강한 비|매우 강한 소나기|강한 소나기)/.test(String(tomorrowWeather.desc || ""))) || ((Number(tomorrowWeather.rainProb) || 0) >= 80)));
+  const chatLines = toGuideToneTimeSummary(nowFeature.trendLead, time.summary, {
+    tomorrowBrief: tomorrowBrief ? { ...tomorrowBrief, risky: riskyTomorrow } : null,
+    tomorrowWeather,
+  })
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const isCompactChat = isCompactChatViewport();
+  if (isCompactChat) {
+    const firstBubble = chatLines.length >= 3 ? chatLines.slice(0, 2).join("\n") : (chatLines[0] || "");
+    const secondBubble = chatLines.length >= 3 ? (chatLines[2] || "") : (chatLines[1] || "");
+
+    if (firstBubble) {
+      el.timeSummary.hidden = false;
+      el.timeSummary.innerHTML = withLineBreaks(firstBubble);
+    } else {
+      el.timeSummary.hidden = true;
+      el.timeSummary.innerHTML = "";
+    }
+
+    if (secondBubble && secondBubble.trim()) {
+      el.nowSummary.hidden = false;
+      el.nowSummary.innerHTML = withLineBreaks(secondBubble);
+    } else {
+      el.nowSummary.hidden = true;
+      el.nowSummary.innerHTML = "";
+    }
+  } else {
+    el.timeSummary.hidden = false;
+    el.timeSummary.innerHTML = withLineBreaks(chatLines.join("\n"));
     el.nowSummary.hidden = true;
     el.nowSummary.innerHTML = "";
   }
-
-  el.timeSummary.innerHTML = withLineBreaks(`${nowFeature.trendLead} ${time.summary}`.trim());
   if (el.timeStepToggle) {
     el.timeStepToggle.querySelectorAll(".time-step-btn").forEach((btn) => {
       const hours = Number(btn.dataset.hours || "1");
@@ -1747,6 +2004,7 @@ function render(weather) {
         : (s.dayOffset !== time.slots[i - 1].dayOffset ? dayMarkerLabel(s.dayOffset) : "");
       parts.push(
         `<article class="hour-card ${s.isNearNow ? "near-now" : ""} ${marker ? "day-start" : ""}" style="transform: translateY(${s.offsetPx || 0}px);">` +
+          `${s.isNearNow ? `<span class="hour-current-step-badge">${selectedTimeStepHours}시간 단위</span>` : ""}` +
           `${marker ? `<span class="hour-day-badge">${marker}</span>` : ""}` +
           `${s.note ? `<span class="hour-note-badge ${s.noteType || ""}">${s.note}</span>` : ""}` +
           `<p class="hour-time ${hourPhaseClass(s.hourNum)}">${s.hour}</p><div class="hour-icon">${weatherIconSvg(s.code)}</div><p class="hour-temp">${s.temp}°</p><p class="hour-delta ${s.deltaDir}">${s.deltaDir === "up" ? `↑ ${s.delta}°` : s.deltaDir === "down" ? `↓ ${Math.abs(s.delta)}°` : "&nbsp;"}</p><p class="hour-rain">${dropIconSvg(s.rainProb)} ${s.rainProb}%</p></article>`,
@@ -1791,9 +2049,9 @@ function render(weather) {
   requestAnimationFrame(updateWeeklyGuideLines);
   requestAnimationFrame(updateScrollEdgeOpacity);
 
-  const isMobile = window.matchMedia("(max-width: 1020px)").matches;
-  el.updatedAt.textContent = formatUpdatedAtLabel(new Date(), activeWeatherTimezone, { timeOnly: isMobile });
-  el.locationLabel.textContent = formatLocationLabel(currentPlace, { compact: isMobile });
+  const isMobileMeta = isMobileViewport();
+  el.updatedAt.textContent = formatUpdatedAtLabel(new Date(), activeWeatherTimezone, { timeOnly: isMobileMeta });
+  el.locationLabel.textContent = formatLocationLabel(currentPlace, { compact: isMobileMeta });
   requestAnimationFrame(updateAdaptiveUiScale);
 }
 
@@ -2020,6 +2278,19 @@ installDragScroll(el.timeSlots);
 installDragScroll(el.weekList);
 window.addEventListener("wheel", handleDesktopNearbyHorizontalWheel, { passive: false });
 window.addEventListener("resize", () => {
+  updateForcedNightTheme();
+  const currentViewportIsMobile = window.matchMedia("(max-width: 1020px)").matches;
+  if (currentViewportIsMobile !== lastViewportIsMobile) {
+    lastViewportIsMobile = currentViewportIsMobile;
+    rerenderCachedWeatherIfReady();
+    return;
+  }
+  const currentViewportIsCompactChat = isCompactChatViewport();
+  if (currentViewportIsCompactChat !== lastViewportIsCompactChat) {
+    lastViewportIsCompactChat = currentViewportIsCompactChat;
+    rerenderCachedWeatherIfReady();
+    return;
+  }
   updateAdaptiveUiScale();
   updateWeekOutfitBubbleCollisionLift();
   updateWeekListSafePadding();
@@ -2028,6 +2299,30 @@ window.addEventListener("resize", () => {
   updateScrollEdgeOpacity();
 });
 
+try {
+  const mobileMq = window.matchMedia("(max-width: 1020px)");
+  const compactChatMq = window.matchMedia("(max-width: 560px)");
+  const onViewportModeChange = (e) => {
+    const nextIsMobile = !!e.matches;
+    if (nextIsMobile === lastViewportIsMobile) return;
+    lastViewportIsMobile = nextIsMobile;
+    rerenderCachedWeatherIfReady();
+  };
+  const onCompactChatModeChange = (e) => {
+    const nextIsCompact = !!e.matches;
+    if (nextIsCompact === lastViewportIsCompactChat) return;
+    lastViewportIsCompactChat = nextIsCompact;
+    rerenderCachedWeatherIfReady();
+  };
+  if (typeof mobileMq.addEventListener === "function") {
+    mobileMq.addEventListener("change", onViewportModeChange);
+    compactChatMq.addEventListener("change", onCompactChatModeChange);
+  } else if (typeof mobileMq.addListener === "function") {
+    mobileMq.addListener(onViewportModeChange);
+    compactChatMq.addListener(onCompactChatModeChange);
+  }
+} catch {}
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").catch(() => {});
@@ -2035,6 +2330,7 @@ if ("serviceWorker" in navigator) {
 }
 
 (async function init() {
+  updateForcedNightTheme();
   if (isMobileViewport()) {
     mobileTimeStepAutoLocked = true;
     mobileTimeStepUnlocked = false;
@@ -2042,4 +2338,5 @@ if ("serviceWorker" in navigator) {
   }
   await initDefaultPlaceFromGeolocation();
   await loadWeather();
+  setInterval(updateForcedNightTheme, 60000);
 })();

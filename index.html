@@ -3,125 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5f7fa" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Weather Story" />
-    <title>Seoul Weather Story</title>
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icons/icon-192.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta http-equiv="refresh" content="0; url=./v1/" />
+    <title>Weather Dashboard Versions</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: system-ui, sans-serif;
+        background: #f5f7fa;
+        color: #1f2937;
+      }
+      a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+      }
+    </style>
   </head>
   <body>
-    <main class="app">
-      <header class="topbar">
-      </header>
-      <div class="meta-row">
-        <p class="location-line">
-          <span id="locationLabel">서울, 대한민국</span>
-          <button id="openSearchBtn" class="icon-btn" type="button" aria-label="지역 검색 열기">
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.8 12.4 18 16.6l-1.4 1.4-4.2-4.2a6 6 0 1 1 1.4-1.4ZM8.5 13a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" fill="currentColor"/></svg>
-          </button>
-          <span id="searchStatus"></span>
-        </p>
-        <div class="updated-row">
-          <p class="updated" id="updatedAt">업데이트: -</p>
-          <button id="refreshBtn" class="icon-btn refresh-icon-btn" type="button" aria-label="새로고침">
-            <svg viewBox="0 0 20 20" aria-hidden="true">
-              <path d="M16.7 10a6.7 6.7 0 1 1-2-4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M13.7 2.8h3.5v3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <section class="dashboard">
-        <article class="card main-card">
-          <div id="weatherSkeleton" class="weather-skeleton" hidden aria-hidden="true">
-            <div class="sk-top">
-              <div class="sk-icon sk-shimmer"></div>
-              <div class="sk-lines">
-                <div class="sk-line lg sk-shimmer"></div>
-                <div class="sk-line md sk-shimmer"></div>
-              </div>
-              <div class="sk-summary">
-                <div class="sk-line md sk-shimmer"></div>
-                <div class="sk-line sm sk-shimmer"></div>
-              </div>
-            </div>
-            <div class="sk-line full sk-shimmer"></div>
-            <div class="sk-strip">
-              <div class="sk-chip sk-shimmer"></div>
-              <div class="sk-chip sk-shimmer"></div>
-              <div class="sk-chip sk-shimmer"></div>
-            </div>
-            <div class="sk-cards sk-hour">
-              <div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div>
-            </div>
-            <div class="sk-cards sk-week">
-              <div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div><div class="sk-card sk-shimmer"></div>
-            </div>
-          </div>
-          <div class="now-main">
-            <div class="now-icon" id="nowIcon"></div>
-            <div>
-              <p class="now-temp" id="nowTemp">-°</p>
-              <div class="now-meta">
-                <p class="now-state" id="nowState">-</p>
-                <span class="now-compare-chip" id="nowCompareChip" hidden>-</span>
-              </div>
-            </div>
-            <p class="summary now-side-summary" id="timeSummary">-</p>
-          </div>
-          <p class="summary" id="nowSummary">-</p>
-          <div class="section-row section-row-time">
-            <div class="time-controls-row">
-              <div class="time-control-group">
-                <span class="time-control-label">간격</span>
-                <div class="time-step-toggle" id="timeStepToggle" role="group" aria-label="시간 간격 선택">
-                  <button type="button" class="time-step-btn is-active" data-hours="1" aria-pressed="true"><span>1h</span></button>
-                  <button type="button" class="time-step-btn" data-hours="2" aria-pressed="false"><span>2h</span></button>
-                  <button type="button" class="time-step-btn" data-hours="3" aria-pressed="false"><span>3h</span></button>
-                </div>
-              </div>
-            </div>
-            <div class="scroll-fade-wrap scroll-fade-hour">
-              <div class="hour-strip" id="timeSlots"></div>
-            </div>
-          </div>
-          <div class="section-row section-row-week">
-            <div class="scroll-fade-wrap scroll-fade-week">
-              <ul id="weekList" class="week-list"></ul>
-            </div>
-          </div>
-          <p class="summary week-summary" id="weekSummary">-</p>
-        </article>
-      </section>
-    </main>
-
-    <div id="searchModal" class="search-modal" hidden>
-      <div id="searchBackdrop" class="search-backdrop"></div>
-      <div class="search-dialog" role="dialog" aria-modal="true" aria-label="지역 검색">
-        <div class="search-dialog-head">
-          <strong>지역 검색</strong>
-          <button id="closeSearchBtn" class="icon-btn" type="button" aria-label="검색 닫기">✕</button>
-        </div>
-        <div class="search-wrap modal-search-wrap">
-          <form id="searchForm" class="search-bar" autocomplete="off">
-            <input id="searchInput" type="text" placeholder="도시/국가 검색 (예: 서울, 부산, 도쿄)" />
-            <button id="searchBtn" class="icon-btn search-submit-btn" type="submit" aria-label="검색 실행">
-              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.8 12.4 18 16.6l-1.4 1.4-4.2-4.2a6 6 0 1 1 1.4-1.4ZM8.5 13a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" fill="currentColor"/></svg>
-            </button>
-          </form>
-          <div id="searchSuggest" class="search-suggest" hidden></div>
-        </div>
-      </div>
-    </div>
-
-    <script src="script.js"></script>
+    <p>현재 버전으로 이동 중입니다. <a href="./v1/">`v1` 열기</a></p>
   </body>
 </html>
