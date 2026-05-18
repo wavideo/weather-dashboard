@@ -82,9 +82,9 @@
               <div class="time-control-group">
                 <span class="time-control-label">간격</span>
                 <div class="time-step-toggle" id="timeStepToggle" role="group" aria-label="시간 간격 선택">
-                  <button type="button" class="time-step-btn is-active" data-hours="1" aria-pressed="true"><span>1h</span></button>
+                  <button type="button" class="time-step-btn" data-hours="1" aria-pressed="false"><span>1h</span></button>
                   <button type="button" class="time-step-btn" data-hours="2" aria-pressed="false"><span>2h</span></button>
-                  <button type="button" class="time-step-btn" data-hours="3" aria-pressed="false"><span>3h</span></button>
+                  <button type="button" class="time-step-btn is-active" data-hours="3" aria-pressed="true"><span>3h</span></button>
                 </div>
               </div>
             </div>
@@ -110,6 +110,10 @@
           <button id="closeSearchBtn" class="icon-btn" type="button" aria-label="검색 닫기">✕</button>
         </div>
         <div class="search-wrap modal-search-wrap">
+          <button id="useCurrentLocationBtn" class="use-location-btn" type="button">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5a.9.9 0 0 1 .9.9v1.1a5.6 5.6 0 0 1 4.6 4.6h1.1a.9.9 0 1 1 0 1.8h-1.1a5.6 5.6 0 0 1-4.6 4.6v1.1a.9.9 0 1 1-1.8 0v-1.1a5.6 5.6 0 0 1-4.6-4.6H3.4a.9.9 0 1 1 0-1.8h1.1a5.6 5.6 0 0 1 4.6-4.6V3.4a.9.9 0 0 1 .9-.9Zm0 3.7a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm0 1.9a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8Z" fill="currentColor"/></svg>
+            <span>현재 위치 사용</span>
+          </button>
           <form id="searchForm" class="search-bar" autocomplete="off">
             <input id="searchInput" type="text" placeholder="도시/국가 검색 (예: 서울, 부산, 도쿄)" />
             <button id="searchBtn" class="icon-btn search-submit-btn" type="submit" aria-label="검색 실행">

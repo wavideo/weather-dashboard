@@ -5,7 +5,7 @@ let searchSuggestTimer = null;
 let searchSuggestions = [];
 let searchSuggestReqSeq = 0;
 let lastWeatherData = null;
-let selectedTimeStepHours = 1;
+let selectedTimeStepHours = 3;
 let mobileTimeStepAutoLocked = false;
 let mobileTimeStepUnlocked = false;
 let timeSlotsTapState = null;
@@ -27,6 +27,7 @@ const el = {
   searchInput: document.getElementById("searchInput"),
   searchSuggest: document.getElementById("searchSuggest"),
   searchBtn: document.getElementById("searchBtn"),
+  useCurrentLocationBtn: document.getElementById("useCurrentLocationBtn"),
   nowIcon: document.getElementById("nowIcon"),
   nowTemp: document.getElementById("nowTemp"),
   nowState: document.getElementById("nowState"),
@@ -1797,17 +1798,19 @@ function render(weather) {
   requestAnimationFrame(updateAdaptiveUiScale);
 }
 
-async function loadWeather() {
+async function loadWeather(options = {}) {
+  const clearStatus = options && typeof options.clearStatus === "boolean" ? options.clearStatus : true;
   el.refresh.disabled = true;
   el.refresh.classList.add("is-loading");
   if (el.searchBtn) el.searchBtn.disabled = true;
+  if (el.useCurrentLocationBtn) el.useCurrentLocationBtn.disabled = true;
   setWeatherLoadingSkeleton(true);
   try {
     const weather = await fetchWeatherByCoords(currentPlace);
     activeWeatherTimezone = weather.timezone || activeWeatherTimezone;
     lastWeatherData = weather;
     render(weather);
-    el.searchStatus.textContent = "";
+    if (clearStatus) el.searchStatus.textContent = "";
   } catch (err) {
     el.nowSummary.textContent = err.message || "오류가 발생했습니다.";
   } finally {
@@ -1815,6 +1818,7 @@ async function loadWeather() {
     el.refresh.disabled = false;
     el.refresh.classList.remove("is-loading");
     if (el.searchBtn) el.searchBtn.disabled = false;
+    if (el.useCurrentLocationBtn) el.useCurrentLocationBtn.disabled = false;
   }
 }
 
@@ -1842,6 +1846,7 @@ async function initDefaultPlaceFromGeolocation() {
       currentPlace.country = reverse.country || currentPlace.country;
     }
     el.searchStatus.textContent = "";
+    return true;
   } catch (err) {
     currentPlace = { ...DEFAULT_PLACE };
     if (err && typeof err.code === "number") {
@@ -1850,10 +1855,18 @@ async function initDefaultPlaceFromGeolocation() {
     } else {
       el.searchStatus.textContent = "현재 위치를 확인하지 못해 서울 날씨를 표시해요.";
     }
+    return false;
   } finally {
     // Keep skeleton visible through the subsequent weather fetch if still loading.
     // It will be hidden in loadWeather() finally.
   }
+}
+
+async function handleUseCurrentLocationClick() {
+  closeSuggestions();
+  const located = await initDefaultPlaceFromGeolocation();
+  if (located) closeSearchModal();
+  await loadWeather({ clearStatus: located });
 }
 
 async function handleSearchSubmit(e) {
@@ -1992,6 +2005,7 @@ el.refresh.addEventListener("click", loadWeather);
 el.searchForm.addEventListener("submit", handleSearchSubmit);
 el.searchInput.addEventListener("input", handleSearchInput);
 el.searchInput.addEventListener("focus", handleSearchFocus);
+el.useCurrentLocationBtn?.addEventListener("click", handleUseCurrentLocationClick);
 el.timeStepToggle?.addEventListener("click", handleTimeStepToggleClick);
 el.searchSuggest.addEventListener("click", handleSuggestionClick);
 document.addEventListener("click", (e) => {
@@ -2036,10 +2050,9 @@ if ("serviceWorker" in navigator) {
 
 (async function init() {
   if (isMobileViewport()) {
-    mobileTimeStepAutoLocked = true;
+    mobileTimeStepAutoLocked = false;
     mobileTimeStepUnlocked = false;
     selectedTimeStepHours = 3;
   }
-  await initDefaultPlaceFromGeolocation();
   await loadWeather();
 })();

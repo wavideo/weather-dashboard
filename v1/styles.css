@@ -197,6 +197,34 @@ h1 { margin: 0; font-size: clamp(32px, 6vw, 56px); font-weight: 800; }
 .modal-search-wrap .search-bar {
   border-radius: 18px;
 }
+.use-location-btn {
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(29, 78, 216, 0.18);
+  border-radius: 14px;
+  background: rgba(29, 78, 216, 0.08);
+  color: #1d4ed8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.use-location-btn svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+.use-location-btn:hover {
+  background: rgba(29, 78, 216, 0.12);
+}
+.use-location-btn:disabled {
+  cursor: wait;
+  opacity: .62;
+}
 .modal-search-wrap .search-suggest {
   left: 0;
   right: 0;
